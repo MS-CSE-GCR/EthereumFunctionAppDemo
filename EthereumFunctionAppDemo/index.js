@@ -1,17 +1,18 @@
 module.exports = function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
-
-    if (req.query.name || (req.body && req.body.name)) {
+    var txURL = "http://52.234.144.43:8545";
+    if(req.method == 'GET'){
+        var Web3 = require('Web3');
+        var web3 = new Web3();
+        web3.setProvider(new web3.providers.HttpProvider(txURL));
         context.res = {
-            // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
+            accounts :web3.eth.accounts,
+            status: 'ok'
         };
+        context.done();
     }
-    else {
-        context.res = {
-            status: 400,
-            body: "Please pass a name on the query string or in the request body"
-        };
-    }
+    context.res = {
+        status: 400,
+    }; 
     context.done();
 };
