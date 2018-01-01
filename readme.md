@@ -109,7 +109,7 @@ if required.
 
 -   Choose the repository we created in first step as sources
 
-    ![](media/5d6d377cc4273d00efd6c42e593faa80.png)
+![](media/5d6d377cc4273d00efd6c42e593faa80.png)
 
 -   Click OK to connect. Now you have successfully setup Continuous Deployment
     for Azure Function App.
@@ -129,9 +129,9 @@ sure you have Node version greater than 8.4.0 installed.
 
 -   Open command prompt, execute blow command to install Function App 2.X
     runtime
-```
-npm install -g azure-functions-core-tools\@core
-```
+
+-   npm install -g azure-functions-core-tools\\\@core
+
 -   Create an empty folder, we will be using this folder as our local repository
 
 -   Switch to the newly created folder, execute the following command to
@@ -151,22 +151,22 @@ func new EthereumFunctionAppDemo
 ![](media/001746f4639a1cd3d24b2e097b7e5ab9.png)
 
 -   Execute below command to add current folder to source control
-```
-git add .
-```
+
+-   git add .
+
 -   Commit changes
-```
-git commit -m “init”
-```
+
+-   git commit -m “init”
+
 -   Configure remote repository
-```
-git remote add origin \<YOUR GIT URL\>
-```
+
+-   git remote add origin \\\<YOUR GIT URL\\\>
+
 -   Push codes to remote repository
-```
-git push -u origin master
-```
-![](media/44f65affa44484bdae22bb399b4db0ce.png)
+
+-   git push -u origin master
+
+    ![](media/44f65affa44484bdae22bb399b4db0ce.png)
 
 -   Now you have successfully configured Function App local runtime and Github
     source control.
@@ -188,39 +188,37 @@ you can use your favorite Node.JS editor of your choice.
 
 -   Open Command Prompt, go to the Function App folder we created in above steps
     and run below commands to initiate a node package file and then install web3
-    library.
-```
-npm init
+    library. \`\`\` npm init
 
-npm install -s <web3@0.19.0>
-```
+npm install -s <web3@0.19.0> \`\`\`
+
 ![](media/7a985982144fe7e1d330b2d9e96cf36e.png)
 
 -   Launch Visual Studio Code and open the project folder we created.
 
 -   Let’s add very basic function to list all accounts created in blockchain,
     modify Index.js as below
-```csharp
-   module.exports = function (context, req) {
-   context.log('JavaScript HTTP trigger function processed a request.');
-   var txURL = "http://\<YOUR TRANSACTION NODE URL\>:8545";
-   if(req.method == 'GET'){
-        var Web3 = require('Web3');
-        var web3 = new Web3();
-        web3.setProvider(new web3.providers.HttpProvider(txURL));
-        context.res = {
-            accounts :web3.eth.accounts,
-            status: 'ok'
-        };
-        context.done();
-    }else{
-        context.res = {
-            status: 400,
-        };
-       context.done();
-    }
-};
-```
+
+-   module.exports = function (context, req) {  
+    context.log('JavaScript HTTP trigger function processed a request.');  
+    var txURL = "http://\\\<YOUR TRANSACTION NODE URL\\\>:8545";  
+    if(req.method == 'GET'){  
+    var Web3 = require('Web3');  
+    var web3 = new Web3();  
+    web3.setProvider(new web3.providers.HttpProvider(txURL));  
+    context.res = {  
+    accounts :web3.eth.accounts,  
+    status: 'ok'  
+    };  
+    context.done();  
+    }else{  
+    context.res = {  
+    status: 400,  
+    };  
+    context.done();  
+    }  
+    };
+
 -   Open command prompt, execute Function app in local machine to test it
     locally
 
@@ -261,6 +259,22 @@ Deploy your middleware
 -   Open browser, navigate to Function App URL and see the results.
 
 ![](media/fdbcf18083ad9f623b840eb893d9f80b.png)
+
+Enable Azure AD Authentication
+------------------------------
+
+-   Goto Azure Portal, navigate to Function App, Platform Features,
+    Authentication/Authorization
+
+![](media/19c14c710b51656e6a8533116f79f0d9.png)
+
+-   Choose Azure AD
+
+![](media/be2c2a48519983499bf3fa5475efc3ac.png)
+
+-   Use Express setting and click OK to complete Azure AD configuration
+
+![](media/2a07d99b1d5f363ee0e7f66a4b7c939c.png)
 
 Troubleshooting
 ---------------
