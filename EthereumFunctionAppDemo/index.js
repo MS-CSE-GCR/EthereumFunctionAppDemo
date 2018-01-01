@@ -1,31 +1,33 @@
+//https://medium.com/@Usurer/azure-function-with-azure-ad-authentication-application-settings-and-adal-js-usage-example-ae0ef4bc47a9
+//https://www.npmjs.com/package/adal-node
 module.exports = function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
-    var txURL = process.env.TX_URL;//"http://52.234.144.43:8545";
+    var txURL = process.env.TX_URL;
     if(req.method == 'GET'){
-        context.log(context.req.headers['x-ms-token-aad-id-token']);
-        context.log(context.req.headers.name);  //login user name
-        var user = context.req.headers.name;
+        var name = '';
         var token = '';
         try{
-            token = context.req.headers['x-ms-token-aad-id-token'];
-        }catch{
+            name = req.headers['x-ms-client-principal-name'];
+            token = req.headers['x-ms-token-aad-id-token'];
+            context.log('name=' + name);
+            context.log('token=' + token);
+            
+        }catch(ex){
 
         }
         var Web3 = require('Web3');
         var web3 = new Web3();
         web3.setProvider(new web3.providers.HttpProvider(txURL));
         context.res = {
+            user:name,
             accounts :web3.eth.accounts,
-            user: user,
-            token:token,
             status: 'ok'
         };
         context.done();
     }
     context.res = {
-        user: user,
-        token:token,
-        status: 400,
+        user: name,
+        status: 'error',
     }; 
     context.done();
 };
