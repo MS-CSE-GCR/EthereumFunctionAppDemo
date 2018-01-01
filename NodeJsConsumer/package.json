@@ -9,6 +9,7 @@
   "author": "michi@microsoft.com",
   "license": "ISC",
   "dependencies": {
-    "request":"*"
+    "request": "*",
+    "adal-node": "*"
   }
 }
