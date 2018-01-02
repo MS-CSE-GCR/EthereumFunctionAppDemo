@@ -16,7 +16,6 @@ namespace ConsoleApp2
         static async Task<string> GetToken2(string url, string cid, string secret)
         {
             //https://stackoverflow.com/questions/44337449/postman-you-do-not-have-permission-to-view-this-directory-or-page-with-bearer -> Works!
-            //client_id=535fb089-9ff3-47b6-9bfb-4f1264799865&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=qWgdYAmab0YSkuL1qKv5bPX&grant_type=client_credentials
             var postData = $"client_id={cid}&scope={url}.default&client_secret={secret}&grant_type=client_credentials";
             var http = new System.Net.Http.HttpClient();
             
@@ -29,8 +28,7 @@ namespace ConsoleApp2
         
         static void Main(string[] args)
         {
-            //var token = Task.Run(() => GetToken2("https%3A%2F%2Fsampledemo001.azurewebsites.net%2F", "614ac59a-237d-47ed-947d-173e433984ec", "G74ZLVY0qmJ7FHXzlehMfg1FXjwVzxXgjgo3k5vAfik=")).Result;
-            var token = Task.Run(() => GetToken2("https%3A%2F%2Fethereumfunctionappdemo.azurewebsites.net%2Fapi%2FEthereumFunctionAppDemo%2F", "c1d65613-8128-474f-8bbf-0dcb262074fa", "KaNDQUdMD8NW8XIes7ePO6a/5zHv16m8KRLp15o3b40=")).Result;
+            var token = Task.Run(() => GetToken2("https%3A%2F%2Fethereumfunctionappdemo.azurewebsites.net%2Fapi%2FEthereumFunctionAppDemo%2F", "{Application Id}", "{Client Secret}")).Result;
 
             var http = new System.Net.Http.HttpClient();
             http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
