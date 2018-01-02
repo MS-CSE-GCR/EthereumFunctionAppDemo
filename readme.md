@@ -339,7 +339,7 @@ consume Azure AD protected Function App.
 
 -   In order to invoke an Azure AD protected API, we must first acquire access
     token.
-
+```csharp
 static async Task\<string\> GetToken2(string url, string cid, string secret)
 
 {
@@ -364,9 +364,9 @@ JObject o = JsonConvert.DeserializeObject\<JObject\>(body);
 return o["access_token"].Value\<string\>();
 
 }
-
+```
 -   To invoke protected API with access token we just acquired.
-
+```csharp
 static void Main(string[] args)
 
 {
@@ -392,6 +392,6 @@ Console.WriteLine(body);
 Console.ReadLine();
 
 }
-
+```
 ### Troubleshooting ###
 ---------------
