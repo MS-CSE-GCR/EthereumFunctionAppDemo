@@ -37,7 +37,19 @@ Azure Function App online code editor without CD enabled.
 
 Table of Content
 ----------------
-[Create Function App and Setup CD](#Create Function App and Setup CD)
+[Create Function App and Setup CD](#create-function-app-and-setup-cd)
+
+[Setup Function App Local Test Environment and Github source control](#setup-function-app-local-test-environment-and-github-source-control)
+
+[Write your Ethereum middleware](#write-your-ethereum-middleware)
+
+[Deploy your middleware](#deploy-your-middleware)
+
+[Enable Azure AD Authentication](#enable-azure-ad-authentication)
+
+[Troubleshooting](#troubleshooting)
+
+[Writing Client Application](#writing-client-application)
 
 ### Create Function App and Setup CD ###
 --------------------------------
@@ -115,7 +127,7 @@ if required.
 -   Click OK to connect. Now you have successfully setup Continuous Deployment
     for Azure Function App.
 
-Setup Function App Local Test Environment and Github source control
+### Setup Function App Local Test Environment and Github source control ###
 -------------------------------------------------------------------
 
 Detail steps and requirements of installing Function App Local environment are
@@ -181,7 +193,7 @@ func new EthereumFunctionAppDemo
 
 ![](media/7537e5a925dbbe20ec4ca83596d594dd.png)
 
-Write your Ethereum middleware
+### Write your Ethereum middleware ###
 ------------------------------
 
 In this section, we will be using Visual Studio Code to write codes, however,
@@ -232,7 +244,7 @@ npm install -s <web3@0.19.0> \`\`\`
 
 ![](media/69b4ab7bd90b2543417f3968020d595c.png)
 
-Deploy your middleware
+### Deploy your middleware ###
 ----------------------
 
 -   Once we have verified Function App locally, we are good to deploy to Azure
@@ -261,7 +273,7 @@ Deploy your middleware
 
 ![](media/fdbcf18083ad9f623b840eb893d9f80b.png)
 
-Enable Azure AD Authentication
+### Enable Azure AD Authentication ###
 ------------------------------
 
 In this section, we will be enable Azure AD authentication to protect our API.
@@ -315,7 +327,7 @@ discussion from StackOverflow which is useful can be found here:
 
 ![](media/319ad279744ff21983e936ebd800b688.png)
 
-Writing Client Application
+### Writing Client Application ### 
 --------------------------
 
 In this section we will be introducing how to write a client application to
@@ -327,7 +339,7 @@ consume Azure AD protected Function App.
 
 -   In order to invoke an Azure AD protected API, we must first acquire access
     token.
-
+```csharp
 static async Task\<string\> GetToken2(string url, string cid, string secret)
 
 {
@@ -352,9 +364,9 @@ JObject o = JsonConvert.DeserializeObject\<JObject\>(body);
 return o["access_token"].Value\<string\>();
 
 }
-
+```
 -   To invoke protected API with access token we just acquired.
-
+```csharp
 static void Main(string[] args)
 
 {
@@ -380,6 +392,6 @@ Console.WriteLine(body);
 Console.ReadLine();
 
 }
-
-Troubleshooting
+```
+### Troubleshooting ###
 ---------------
