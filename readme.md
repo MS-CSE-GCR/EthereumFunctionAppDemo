@@ -393,5 +393,9 @@ Console.ReadLine();
 
 }
 ```
+
+-   Full sample codes can be found ![here](ConsumerApp/ConsoleApp2)
+
+
 ### Troubleshooting ###
 ---------------
