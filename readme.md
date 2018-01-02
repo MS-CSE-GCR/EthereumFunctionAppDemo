@@ -37,8 +37,9 @@ Azure Function App online code editor without CD enabled.
 
 Table of Content
 ----------------
+[Create Function App and Setup CD](#Create Function App and Setup CD)
 
-Create Function App and Setup CD
+### Create Function App and Setup CD ###
 --------------------------------
 
 In this section, we will be introducing how to setup Azure Function App continue
@@ -166,7 +167,7 @@ func new EthereumFunctionAppDemo
 
 -   git push -u origin master
 
-    ![](media/44f65affa44484bdae22bb399b4db0ce.png)
+![](media/44f65affa44484bdae22bb399b4db0ce.png)
 
 -   Now you have successfully configured Function App local runtime and Github
     source control.
@@ -263,6 +264,14 @@ Deploy your middleware
 Enable Azure AD Authentication
 ------------------------------
 
+In this section, we will be enable Azure AD authentication to protect our API.
+Details discussion on Azure AD’s authorization is here:
+<https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols-oauth-client-creds>
+
+We will also be writing a client application to consume this API. Some
+discussion from StackOverflow which is useful can be found here:
+<https://stackoverflow.com/questions/44337449/postman-you-do-not-have-permission-to-view-this-directory-or-page-with-bearer>
+
 -   Goto Azure Portal, navigate to Function App, Platform Features,
     Authentication/Authorization
 
@@ -275,6 +284,102 @@ Enable Azure AD Authentication
 -   Use Express setting and click OK to complete Azure AD configuration
 
 ![](media/2a07d99b1d5f363ee0e7f66a4b7c939c.png)
+
+-   Go back to “Experss” mode, click “Manage Application” to open Azure AD
+    application registration tab
+
+![](media/8d202dd00420c1331f6812c65ebd116c.png)
+
+-   Switch to “Advanced” mode, note “Application ID”
+
+![](media/056a466107f611e3fdbbbc4aedd80a34.png)
+
+-   Go to “Required Permissions” tab, Windows Azure Active Directory, default
+    permission is sufficient for our API, you may want to grant other
+    permissions when needed.
+
+![](media/5ec7abec51e729821b63bde35e35a5ff.png)
+
+-   Goto Properties, note “APP ID URI”
+
+![](media/106fcea62bf9a96fcf9cbdd97314b4ee.png)
+
+-   Switch back to “Advanced” mode, add “APP Id URL” we just copied to “Allowed
+    Token Audiences” and Copy the “Client Secret”, we will need it in our
+    consumer application.
+
+![](media/fcb0396afe730756ce35a6dfe078d31b.png)
+
+-   Once complete, leave Management Mode in “Advanced” than click “OK” than
+    “Save” to accept settings.
+
+![](media/319ad279744ff21983e936ebd800b688.png)
+
+Writing Client Application
+--------------------------
+
+In this section we will be introducing how to write a client application to
+consume Azure AD protected Function App.
+
+-   Create a new Console Application in Visual Studio, add below Nuget package
+
+![](media/7f024d1a4e3f4076e3bdb2c82ccb43a8.png)
+
+-   In order to invoke an Azure AD protected API, we must first acquire access
+    token.
+
+static async Task\<string\> GetToken2(string url, string cid, string secret)
+
+{
+
+var postData =
+\$"client_id={cid}\&scope={url}.default&client_secret={secret}&grant_type=client_credentials";
+
+var http = new System.Net.Http.HttpClient();
+
+//Replace below highlighted with your own Tenant ID
+
+var resp = await
+http.PostAsync("https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+
+new StringContent(postData, Encoding.ASCII,
+"application/x-www-form-urlencoded"));
+
+var body = await resp.Content.ReadAsStringAsync();
+
+JObject o = JsonConvert.DeserializeObject\<JObject\>(body);
+
+return o["access_token"].Value\<string\>();
+
+}
+
+-   To invoke protected API with access token we just acquired.
+
+static void Main(string[] args)
+
+{
+
+var encodedUri = HttpUtility.UrlEncode(Encoding.ASCII.GetBytes("{APP ID URL We
+note in previous step (https://somehost.domain/blah)}"));
+
+var token = Task.Run(() =\> GetToken2(encodedUri, "{app id}", "{client
+secret}")).Result;
+
+var http = new System.Net.Http.HttpClient();
+
+http.DefaultRequestHeaders.Authorization = new
+System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+var resp = Task.Run(() =\> http.GetAsync("{Function App’s Http Trigger
+endpoint}")).Result;
+
+var body = Task.Run(() =\> resp.Content.ReadAsStringAsync()).Result;
+
+Console.WriteLine(body);
+
+Console.ReadLine();
+
+}
 
 Troubleshooting
 ---------------

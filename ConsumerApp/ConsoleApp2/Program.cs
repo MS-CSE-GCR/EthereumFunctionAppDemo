@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Dynamic;
 using Newtonsoft.Json.Linq;
+using System.Web;
 
 namespace ConsoleApp2
 {
@@ -18,17 +19,19 @@ namespace ConsoleApp2
             //https://stackoverflow.com/questions/44337449/postman-you-do-not-have-permission-to-view-this-directory-or-page-with-bearer -> Works!
             var postData = $"client_id={cid}&scope={url}.default&client_secret={secret}&grant_type=client_credentials";
             var http = new System.Net.Http.HttpClient();
-            
+
             var resp = await http.PostAsync("https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
-                        new StringContent(postData,Encoding.ASCII, "application/x-www-form-urlencoded"));
+                        new StringContent(postData, Encoding.ASCII, "application/x-www-form-urlencoded"));
             var body = await resp.Content.ReadAsStringAsync();
-            JObject o = JsonConvert.DeserializeObject<JObject>(body) ;
+            JObject o = JsonConvert.DeserializeObject<JObject>(body);
             return o["access_token"].Value<string>();
         }
-        
+
         static void Main(string[] args)
         {
-            var token = Task.Run(() => GetToken2("https%3A%2F%2Fethereumfunctionappdemo.azurewebsites.net%2Fapi%2FEthereumFunctionAppDemo%2F", "{Application Id}", "{Client Secret}")).Result;
+            //"https%3A%2F%2Fethereumfunctionappdemo.azurewebsites.net%2Fapi%2FEthereumFunctionAppDemo%2F"
+            var encodedUri = HttpUtility.UrlEncode(Encoding.ASCII.GetBytes("https://ethereumfunctionappdemo.azurewebsites.net/api/EthereumFunctionAppDemo/"));
+            var token = Task.Run(() => GetToken2(encodedUri, "{app id}", "{client secret}")).Result;
 
             var http = new System.Net.Http.HttpClient();
             http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
