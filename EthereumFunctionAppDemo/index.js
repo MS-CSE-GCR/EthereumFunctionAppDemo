@@ -11,7 +11,6 @@ module.exports = function (context, req) {
             token = req.headers['x-ms-token-aad-id-token'];
             context.log('name=' + name);
             context.log('token=' + token);
-            
         }catch(ex){
 
         }
