@@ -164,20 +164,21 @@ func new EthereumFunctionAppDemo
 ![](media/001746f4639a1cd3d24b2e097b7e5ab9.png)
 
 -   Execute below command to add current folder to source control
-
--   git add .
-
+```
+git add .
+```
 -   Commit changes
-
--   git commit -m “init”
-
+```
+git commit -m “init”
+```
 -   Configure remote repository
-
--   git remote add origin \\\<YOUR GIT URL\\\>
-
+```
+git remote add origin \\\<YOUR GIT URL\\\>
+```
 -   Push codes to remote repository
-
--   git push -u origin master
+```
+git push -u origin master
+```
 
 ![](media/44f65affa44484bdae22bb399b4db0ce.png)
 
