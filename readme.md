@@ -143,7 +143,9 @@ sure you have Node version greater than 8.4.0 installed.
 -   Open command prompt, execute blow command to install Function App 2.X
     runtime
 
--   npm install -g azure-functions-core-tools\\\@core
+```
+npm install -g azure-functions-core-tools@core
+```
 
 -   Create an empty folder, we will be using this folder as our local repository
 
@@ -204,10 +206,11 @@ you can use your favorite Node.JS editor of your choice.
     and run below commands to initiate a node package file and then install web3
     library. 
 
+```
+npm init
 
-    - `npm init`
-
-    - `npm install -s web3@0.19.0`
+npm install -s web3@0.19.0
+```
 
 ![](media/7a985982144fe7e1d330b2d9e96cf36e.png)
 
@@ -351,33 +354,27 @@ consume Azure AD protected Function App.
 ```csharp
 static async Task\<string\> GetToken2(string url, string cid, string secret)
 {
-
-    var postData =
-    $"client_id={cid}\&scope={url}.default&client_secret={secret}&grant_type=client_credentials";
+    var postData = $"client_id={cid}\&scope={url}.default&client_secret={secret}&grant_type=client_credentials";
 
     var http = new System.Net.Http.HttpClient();
 
     //Replace below highlighted with your own Tenant ID
-
-    var resp = await http.PostAsync( "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token" , new StringContent( postData, Encoding.ASCII, "application/x-www-form-urlencoded"));
+    var resp = await http.PostAsync("https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token" , new StringContent( postData, Encoding.ASCII, "application/x-www-form-urlencoded"));
 
     var body = await resp.Content.ReadAsStringAsync();
 
     JObject o = JsonConvert.DeserializeObject\<JObject\>(body);
 
     return o["access_token"].Value\<string\>();
-
 }
 ```
 -   To invoke protected API with access token we just acquired.
 ```csharp
 static void Main(string[] args)
 {
-    var encodedUri = HttpUtility.UrlEncode(Encoding.ASCII.GetBytes("{APP ID URL We
-note in previous step (https://somehost.domain/blah)}"));
+    var encodedUri = HttpUtility.UrlEncode(Encoding.ASCII.GetBytes("{APP ID URL We note in previous step (https://somehost.domain/blah)}"));
 
-    var token = Task.Run(() =\> GetToken2(encodedUri, "{app id}", "{client
-secret}")).Result;
+    var token = Task.Run(() =\> GetToken2(encodedUri, "{app id}", "{client secret}")).Result;
 
     var http = new System.Net.Http.HttpClient();
 
