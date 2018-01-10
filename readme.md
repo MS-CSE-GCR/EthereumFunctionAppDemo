@@ -202,9 +202,12 @@ you can use your favorite Node.JS editor of your choice.
 
 -   Open Command Prompt, go to the Function App folder we created in above steps
     and run below commands to initiate a node package file and then install web3
-    library. \`\`\` npm init
+    library. 
 
-npm install -s <web3@0.19.0> \`\`\`
+
+    - `npm init`
+
+    - `npm install -s web3@0.19.0`
 
 ![](media/7a985982144fe7e1d330b2d9e96cf36e.png)
 
