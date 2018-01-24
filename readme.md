@@ -143,7 +143,9 @@ sure you have Node version greater than 8.4.0 installed.
 -   Open command prompt, execute blow command to install Function App 2.X
     runtime
 
--   npm install -g azure-functions-core-tools\\\@core
+```
+npm install -g azure-functions-core-tools@core
+```
 
 -   Create an empty folder, we will be using this folder as our local repository
 
@@ -202,9 +204,13 @@ you can use your favorite Node.JS editor of your choice.
 
 -   Open Command Prompt, go to the Function App folder we created in above steps
     and run below commands to initiate a node package file and then install web3
-    library. \`\`\` npm init
+    library. 
 
-npm install -s <web3@0.19.0> \`\`\`
+```
+npm init
+
+npm install -s web3@0.19.0
+```
 
 ![](media/7a985982144fe7e1d330b2d9e96cf36e.png)
 
@@ -213,25 +219,30 @@ npm install -s <web3@0.19.0> \`\`\`
 -   Let’s add very basic function to list all accounts created in blockchain,
     modify Index.js as below
 
--   module.exports = function (context, req) {  
+```js
+module.exports = function (context, req) {  
     context.log('JavaScript HTTP trigger function processed a request.');  
     var txURL = "http://\\\<YOUR TRANSACTION NODE URL\\\>:8545";  
     if(req.method == 'GET'){  
-    var Web3 = require('Web3');  
-    var web3 = new Web3();  
-    web3.setProvider(new web3.providers.HttpProvider(txURL));  
-    context.res = {  
-    accounts :web3.eth.accounts,  
-    status: 'ok'  
-    };  
-    context.done();  
-    }else{  
-    context.res = {  
-    status: 400,  
-    };  
-    context.done();  
-    }  
+        var Web3 = require('Web3');  
+        var web3 = new Web3();  
+        web3.setProvider(new web3.providers.HttpProvider(txURL));  
+        context.res = {  
+            accounts :web3.eth.accounts,  
+            status: 'ok'  
+        };  
+        context.done();  
+    } else{  
+        context.res = {  
+        status: 400,          
+        context.res = {  
+            status: 400,  
+        };  
+        context.done();  
+        }
     };
+}
+```
 
 -   Open command prompt, execute Function app in local machine to test it
     locally
@@ -298,7 +309,7 @@ discussion from StackOverflow which is useful can be found here:
 
 ![](media/2a07d99b1d5f363ee0e7f66a4b7c939c.png)
 
--   Go back to “Experss” mode, click “Manage Application” to open Azure AD
+-   Go back to “Express” mode, click “Manage Application” to open Azure AD
     application registration tab
 
 ![](media/8d202dd00420c1331f6812c65ebd116c.png)
@@ -313,11 +324,11 @@ discussion from StackOverflow which is useful can be found here:
 
 ![](media/5ec7abec51e729821b63bde35e35a5ff.png)
 
--   Goto Properties, note “APP ID URI”
+-   Goto Properties, note “App ID URI”
 
 ![](media/106fcea62bf9a96fcf9cbdd97314b4ee.png)
 
--   Switch back to “Advanced” mode, add “APP Id URL” we just copied to “Allowed
+-   Switch back to “Advanced” mode, add “App ID URL” we just copied to “Allowed
     Token Audiences” and Copy the “Client Secret”, we will need it in our
     consumer application.
 
@@ -342,60 +353,45 @@ consume Azure AD protected Function App.
     token.
 ```csharp
 static async Task\<string\> GetToken2(string url, string cid, string secret)
-
 {
+    var postData = $"client_id={cid}\&scope={url}.default&client_secret={secret}&grant_type=client_credentials";
 
-var postData =
-\$"client_id={cid}\&scope={url}.default&client_secret={secret}&grant_type=client_credentials";
+    var http = new System.Net.Http.HttpClient();
 
-var http = new System.Net.Http.HttpClient();
+    //Replace below highlighted with your own Tenant ID
+    var resp = await http.PostAsync("https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token" , new StringContent( postData, Encoding.ASCII, "application/x-www-form-urlencoded"));
 
-//Replace below highlighted with your own Tenant ID
+    var body = await resp.Content.ReadAsStringAsync();
 
-var resp = await
-http.PostAsync("https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+    JObject o = JsonConvert.DeserializeObject\<JObject\>(body);
 
-new StringContent(postData, Encoding.ASCII,
-"application/x-www-form-urlencoded"));
-
-var body = await resp.Content.ReadAsStringAsync();
-
-JObject o = JsonConvert.DeserializeObject\<JObject\>(body);
-
-return o["access_token"].Value\<string\>();
-
+    return o["access_token"].Value\<string\>();
 }
 ```
 -   To invoke protected API with access token we just acquired.
 ```csharp
 static void Main(string[] args)
-
 {
+    var encodedUri = HttpUtility.UrlEncode(Encoding.ASCII.GetBytes("{APP ID URL We note in previous step (https://somehost.domain/blah)}"));
 
-var encodedUri = HttpUtility.UrlEncode(Encoding.ASCII.GetBytes("{APP ID URL We
-note in previous step (https://somehost.domain/blah)}"));
+    var token = Task.Run(() =\> GetToken2(encodedUri, "{app id}", "{client secret}")).Result;
 
-var token = Task.Run(() =\> GetToken2(encodedUri, "{app id}", "{client
-secret}")).Result;
+    var http = new System.Net.Http.HttpClient();
 
-var http = new System.Net.Http.HttpClient();
+    http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-http.DefaultRequestHeaders.Authorization = new
-System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-var resp = Task.Run(() =\> http.GetAsync("{Function App’s Http Trigger
+    var resp = Task.Run(() =\> http.GetAsync("{Function App’s Http Trigger
 endpoint}")).Result;
 
-var body = Task.Run(() =\> resp.Content.ReadAsStringAsync()).Result;
+    var body = Task.Run(() =\> resp.Content.ReadAsStringAsync()).Result;
 
-Console.WriteLine(body);
+    Console.WriteLine(body);
 
-Console.ReadLine();
-
+    Console.ReadLine();
 }
 ```
 
--   Full sample codes can be found ![here](ConsumerApp/ConsoleApp2)
+-   Full sample codes can be found [here](ConsumerApp/ConsoleApp2)
 
 
 ### Troubleshooting ###
